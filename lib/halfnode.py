@@ -131,12 +131,17 @@ class CTransaction(object):
         self.vin = []
         self.vout = []
         self.nLockTime = 0
+        self.nRefHeight = 0
         self.sha256 = None
     def deserialize(self, f):
         self.nVersion = struct.unpack("<i", f.read(4))[0]
         self.vin = deser_vector(f, CTxIn)
         self.vout = deser_vector(f, CTxOut)
         self.nLockTime = struct.unpack("<I", f.read(4))[0]
+        if self.nVersion >= 2:
+            self.nRefHeight = struct.unpack('<I', f.read(4))[0]
+        else:
+            self.nRefHeight = 0
         self.sha256 = None
     def serialize(self):
         r = ""
@@ -144,6 +149,8 @@ class CTransaction(object):
         r += ser_vector(self.vin)
         r += ser_vector(self.vout)
         r += struct.pack("<I", self.nLockTime)
+        if self.nVersion >= 2:
+            r += struct.pack("<I", self.nRefHeight)
         return r
     
     def calc_sha256(self):
@@ -158,7 +165,11 @@ class CTransaction(object):
                 return False
         return True
     def __repr__(self):
-        return "CTransaction(nVersion=%i vin=%s vout=%s nLockTime=%i)" % (self.nVersion, repr(self.vin), repr(self.vout), self.nLockTime)
+        if self.nVersion >= 2:
+            refheight_str = " nRefHeight=%i" % self.nRefHeight
+        else:
+            refheight_str = ""
+        return "CTransaction(nVersion=%i vin=%s vout=%s nLockTime=%i%s)" % (self.nVersion, repr(self.vin), repr(self.vout), self.nLockTime, refheight_str)
 
 class CBlock(object):
     def __init__(self):

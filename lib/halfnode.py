@@ -126,12 +126,12 @@ class CTxOut(object):
         return "CTxOut(nValue=%i.%08i scriptPubKey=%s)" % (self.nValue // 100000000, self.nValue % 100000000, binascii.hexlify(self.scriptPubKey))
 
 class CTransaction(object):
-    def __init__(self):
-        self.nVersion = 1
-        self.vin = []
-        self.vout = []
-        self.nLockTime = 0
-        self.nRefHeight = 0
+    def __init__(self, **kwargs):
+        self.nVersion = kwargs.pop('nVersion', 1)
+        self.vin = kwargs.pop('vin', [])
+        self.vout = kwargs.pop('vout', [])
+        self.nLockTime = kwargs.pop('nLockTime', 0)
+        self.nRefHeight = kwargs.pop('nRefHeight', 0)
         self.sha256 = None
     def deserialize(self, f):
         self.nVersion = struct.unpack("<i", f.read(4))[0]

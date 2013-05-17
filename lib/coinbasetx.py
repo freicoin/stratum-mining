@@ -13,7 +13,7 @@ class CoinbaseTransaction(halfnode.CTransaction):
     extranonce_size = struct.calcsize(extranonce_type)
 
     def __init__(self, timestamper, coinbaser, value, flags, height, data):
-        super(CoinbaseTransaction, self).__init__()
+        super(CoinbaseTransaction, self).__init__(nVersion=2, nRefHeight=height)
         
         #self.extranonce = 0
         

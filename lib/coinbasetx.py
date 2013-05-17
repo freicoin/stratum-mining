@@ -38,6 +38,12 @@ class CoinbaseTransaction(halfnode.CTransaction):
         self.vin.append(tx_in)
         self.vout.append(tx_out)
         
+        for entry in budget:
+            txo = halfnode.CTxOut()
+            txo.nValue = b['value']
+            txo.scriptPubKey = b['scriptPubKey']['hex'].decode('hex')
+            self.vout.append(txo)
+        
         # Two parts of serialized coinbase, just put part1 + extranonce + part2 to have final serialized tx
         self._serialized = super(CoinbaseTransaction, self).serialize().split(self.extranonce_placeholder)
 

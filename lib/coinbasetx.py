@@ -12,7 +12,7 @@ class CoinbaseTransaction(halfnode.CTransaction):
     extranonce_placeholder = struct.pack(extranonce_type, int('f000000ff111111f', 16))
     extranonce_size = struct.calcsize(extranonce_type)
 
-    def __init__(self, timestamper, coinbaser, value, flags, height, data):
+    def __init__(self, timestamper, coinbaser, value, flags, height, data, budget):
         super(CoinbaseTransaction, self).__init__(nVersion=2, nRefHeight=height)
         
         #self.extranonce = 0
@@ -40,8 +40,8 @@ class CoinbaseTransaction(halfnode.CTransaction):
         
         for entry in budget:
             txo = halfnode.CTxOut()
-            txo.nValue = b['value']
-            txo.scriptPubKey = b['scriptPubKey']['hex'].decode('hex')
+            txo.nValue = entry['value']
+            txo.scriptPubKey = entry['scriptPubKey']['hex'].decode('hex')
             self.vout.append(txo)
         
         # Two parts of serialized coinbase, just put part1 + extranonce + part2 to have final serialized tx
